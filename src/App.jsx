@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import image from "/me.png";
-import "./App.css"; 
-
+import "./App.css";
 
 function App() {
   // State to store the person’s profile
@@ -15,17 +14,25 @@ function App() {
   // State to toggle the profile visibility
   const [shows, setShows] = useState(false);
 
-  // State to track time since the component was mounted
+  // State to track time since the profile is shown
   const [timeSinceMount, setTimeSinceMount] = useState(0);
 
-  // Effect to update the timer every second
-  useEffect(() => {
-    const interval = setInterval(() => {
+  // Function to start and reset the timer
+  const handleTimer = () => {
+    setTimeSinceMount(0); // Reset timer when profile is shown
+    return setInterval(() => {
       setTimeSinceMount((prevTime) => prevTime + 1);
     }, 1000);
+  };
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, []); // Runs only once when the component mounts
+  // Effect to update the timer only when the profile is shown
+  useEffect(() => {
+    let interval;
+    if (shows) {
+      interval = handleTimer();
+    }
+    return () => clearInterval(interval); // Cleanup on unmount or when hidden
+  }, [shows]);
 
   return (
     <div className="container">
@@ -45,7 +52,7 @@ function App() {
       )}
 
       {/* Timer display */}
-      <p>Time since mounted: {timeSinceMount} seconds</p>
+      {shows && <p>Time since profile shown: {timeSinceMount} seconds</p>}
     </div>
   );
 }
